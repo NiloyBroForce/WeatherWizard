@@ -1,1 +1,1 @@
-# WeatherWizard
+# WeatherWizard is an innovative web app that lets users get weather update in any place and time.
