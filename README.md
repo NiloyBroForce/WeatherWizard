@@ -1,12 +1,13 @@
-WeatherWizard: Personalized Adverse Weather Predictor
-A Next-Generation Tool for Customizing Your Comfort Threshold and Forecasting Adverse Conditions
-Introduction
-Welcome to WeatherWizard, a highly personalized web application designed to move beyond traditional weather reports. This tool empowers users to define their own comfort levels and receive precise likelihood predictions for adverse conditions at any chosen location and time. By integrating cutting-edge forecasting data with advanced AI insights, WeatherWizard helps users plan outdoor activities and travel with confidence.
-Team Rain Rain Go Away
-Team Leader: Rafin Islam Niloy
-UI/UX Designer & App Developer: Muhammad Nahid
-Researcher: Nazmul Hassan Labid
-Core Features and Personalization
+#WeatherWizard 
+##Team Rain Rain Go Away presents WeatherWizard:Personalized Adverse Weather Predictor 
+##A Next-Generation Tool for Customizing Your Comfort Threshold and Forecasting Adverse Conditions
+##Introduction
+#Welcome to WeatherWizard, a highly personalized web application designed to move beyond traditional weather reports. This tool empowers users to define their own comfort levels and receive precise likelihood predictions for adverse conditions at any chosen location and time. By integrating cutting-edge forecasting data with advanced AI insights, WeatherWizard helps users plan outdoor activities and travel with confidence.
+###Team Rain Rain Go Away
+####Team Leader: Rafin Islam Niloy
+####UI/UX Designer & App Developer: Muhammad Nahid
+####Researcher: Nazmul Hassan Labid
+##Core Features and Personalization
 WeatherWizard offers deep customization to tailor predictions to your specific needs:
 
 Interactive Location Selection: Users can easily select any location on Earth by clicking on the map, supported by clear zoom and pan functionality.
