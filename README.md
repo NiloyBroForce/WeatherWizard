@@ -20,7 +20,7 @@ Combined Likelihood Scoring: The "Very Uncomfortable" likelihood is a joint scor
 
 Gemini AI Insights: After prediction, users can access the “Weather Insights ✨” feature, which uses the Gemini API to analyze the likelihood scores and generate a plain-language summary with practical travel and activity advice.
 
-NASA Mission Context: Provides external links to relevant NASA Earth Science Missions (SMAP, GPM, GRACE) to provide context on the scientific tools used to gather climate and observation data.
+NASA Mission Context: Provides external links to relevant NASA Earth Science Missions (Giovanni, GES DISC) to provide context on the scientific tools used to gather climate and observation data.
 Technology Stack
 WeatherWizard is built as a single-page, real-time application using modern web technologies:
 
@@ -28,7 +28,7 @@ Frontend: HTML5, pure JavaScript (ES6+), and Tailwind CSS for a responsive, colo
 
 Mapping: Leaflet.js for interactive, clickable mapping functionality.
 
-Data Source: Integration with modern forecasting APIs for reliable, up-to-16-day future weather predictions.
+Data Source: Integration with modern forecasting APIs for reliable, future weather predictions.
 
 Intelligence Layer: Google Gemini API for generating custom, context-aware user insights and travel advice.
 
