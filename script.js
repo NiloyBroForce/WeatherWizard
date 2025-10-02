@@ -268,7 +268,7 @@ const getGeminiInsights = async (
 		showLoading();
 
 		try {
-			fetch("/api/app.py", {
+			fetch("/api/app", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
