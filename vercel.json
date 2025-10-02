@@ -1,4 +1,16 @@
 {
-    "builds":[{"src": "app.py","use": "@vercel/python"}],
-    "routes":[{"src": "/(.*)", "dest": "app.py"}]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/app"
+    }
+  ],
+  "functions": {
+    "api/app.py": {
+      "runtime": "@vercel/python",
+      "config": {
+        "includeFiles": ["requirements.txt", "api/gemini.py"]
+      }
+    }
+  }
 }
