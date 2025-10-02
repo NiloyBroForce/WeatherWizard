@@ -279,16 +279,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		showLoading();
 
 		try {
-			const response = await fetch("http://127.0.0.1:5000/api/app.py", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					latitude: parseFloat(lat),
-					longitude: parseFloat(lon),
-					startDate,
-					endDate,
-					discomfortThreshold,
-				}),
+			fetch("/api/app.py", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    latitude: parseFloat(lat),
+    longitude: parseFloat(lon),
+    startDate,
+    endDate,
+    discomfortThreshold,
+  }),
 			});
 
 			if (!response.ok) throw new Error(`Server error: ${response.status}`);
