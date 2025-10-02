@@ -178,60 +178,49 @@ document.addEventListener("DOMContentLoaded", () => {
 	};
 
 	// --- Gemini Insights ---
-	const getGeminiInsights = async (
-		likelihoods,
-		location,
-		startDate,
-		endDate,
-		discomfortThreshold
-	) => {
-		geminiInsightsBtn.disabled = true;
-		geminiInsightsBtn.classList.add("opacity-50", "cursor-not-allowed");
-		geminiText.textContent = "Generating insights...";
-		geminiInsightsDiv.classList.remove("hidden");
-		nasaMissionsDiv.classList.remove("hidden");
+const getGeminiInsights = async (
+    likelihoods,
+    location,
+    startDate,
+    endDate,
+    discomfortThreshold
+) => {
+    geminiInsightsBtn.disabled = true;
+    geminiInsightsBtn.classList.add("opacity-50", "cursor-not-allowed");
+    geminiText.textContent = "Generating insights...";
+    geminiInsightsDiv.classList.remove("hidden");
+    nasaMissionsDiv.classList.remove("hidden");
 
-		const { veryHot, veryCold, veryWindy, veryWet, veryUncomfortable } =
-			likelihoods;
-		const dateRange =
-			startDate === endDate ? startDate : `${startDate} to ${endDate}`;
+    const dateRange =
+        startDate === endDate ? startDate : `${startDate} to ${endDate}`;
 
-		const systemPrompt =
-			"You are a friendly and helpful AI assistant that provides weather insights and travel advice. Keep it concise and encouraging.";
-		const userQuery = `Using data from satellite-based weather models like NASA, and a personalized discomfort threshold of ${discomfortThreshold}°C, provide a human-readable summary of the weather conditions for ${location} from ${dateRange}. Likelihoods:
-- Very Hot: ${veryHot}%
-- Very Cold: ${veryCold}%
-- Very Windy: ${veryWindy}%
-- Very Wet: ${veryWet}%
-- Very Uncomfortable: ${veryUncomfortable}%`;
+    try {
+        // Call your backend endpoint instead of Gemini directly
+        const response = await fetch("/api/gemini", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                likelihoods,
+                location,
+                startDate,
+                endDate,
+                discomfortThreshold
+            })
+        });
 
-		const apiKey = ""; // Insert your key if needed
-		const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${""}`;
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        const data = await response.json();
 
-		try {
-			const payload = {
-				contents: [{ parts: [{ text: userQuery }] }],
-				systemInstruction: { parts: [{ text: systemPrompt }] },
-			};
-			const response = await fetch(apiUrl, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(payload),
-			});
-
-			if (!response.ok) throw new Error(`API error: ${response.status}`);
-			const result = await response.json();
-			const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-			geminiText.textContent =
-				text || "Couldn't generate insights at this time.";
-		} catch (err) {
-			console.error(err);
-			geminiText.textContent = "An error occurred while fetching insights.";
-		} finally {
-			geminiInsightsBtn.disabled = false;
-			geminiInsightsBtn.classList.remove("opacity-50", "cursor-not-allowed");
-		}
-	};
+        geminiText.textContent =
+            data.text || "Couldn't generate insights at this time.";
+    } catch (err) {
+        console.error(err);
+        geminiText.textContent = "An error occurred while fetching insights.";
+    } finally {
+        geminiInsightsBtn.disabled = false;
+        geminiInsightsBtn.classList.remove("opacity-50", "cursor-not-allowed");
+    }
+};
 
 	// --- Map Initialization ---
 	const initializeMapAndUI = (lat = 0, lon = 0) => {
