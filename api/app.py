@@ -217,14 +217,22 @@ def run_data_processing(
     plot_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
     print("Plot generated and Base64 encoded.")
     
-    # --- STEP 3: Return success status, plot data, and real weather parameters ---
-    # Return the Base64 string and the weather parameters in the response
+    # Inside run_data_processing
+    dates = df['time'].dt.strftime('%Y-%m-%d').tolist()
+    temp = df['Tair'].tolist()
+    wind = df['Wind'].tolist()
+    precip = df['Rainf'].tolist()
+
     return {
-        "status": "success", 
-        "message": "NASA data fetched, likelihood parameters calculated, and plot encoded.",
-        "plotBase64": plot_base64,
-        "realWeatherParams": real_weather_params # NEW: Return the real data
-    }
+    "status": "success",
+    "plotBase64": plot_base64,
+    "realWeatherParams": real_weather_params,
+    "dates": dates,
+    "temp": temp,
+    "wind": wind,
+    "precip": precip
+}
+
     
 # Updated route to match the URL assumed in the JavaScript file: /api/app.py
 @app.route('/api/app', methods=['POST'])
@@ -275,6 +283,6 @@ def handle_script_call():
     # 4. Return the results back to the JavaScript frontend (including the plot Base64 data and real params)
     return jsonify(results)
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
     # Running the app with debug=True is good for development
-    app.run()
+   # app.run()
