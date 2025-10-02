@@ -1,8 +1,16 @@
 {
-  "version": 2,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/app"
+    }
+  ],
   "functions": {
-    "api/*.py": {
-      "runtime": "@vercel/python@5.0.0"
+    "api/app.py": {
+      "runtime": "@vercel/python",
+      "config": {
+        "includeFiles": ["requirements.txt", "api/gemini.py"]
+      }
     }
   }
 }
