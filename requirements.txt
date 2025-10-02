@@ -1,0 +1,6 @@
+Flask
+flask-cors
+requests
+pandas
+matplotlib
+seaborn
