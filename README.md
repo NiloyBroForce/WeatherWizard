@@ -8,6 +8,7 @@
 <h3>UI/UX Designer & App Developer: Muhammad Nahid</h3>
 <h3>Researcher & Script Writer: Nazmul Hassan Labid</h3>
 <h2>Core Features and Personalization</h2>
+<br>
 WeatherWizard offers deep customization to tailor predictions to your specific needs:
 
 Interactive Location Selection: Users can easily select any location on Earth by clicking on the map, supported by clear zoom and pan functionality.
