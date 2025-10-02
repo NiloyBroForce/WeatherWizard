@@ -247,74 +247,66 @@ const getGeminiInsights = async (
 		}
 	};
 
-	// --- Predict Button ---
-	predictBtn?.addEventListener("click", async () => {
-		const lat = latitudeInput?.value;
-		const lon = longitudeInput?.value;
-		const startDate = startDateInput?.value;
-		const endDate = endDateInput?.value;
-		const discomfortThreshold = parseFloat(
-			discomfortThresholdInput?.value || 0
-		);
+predictBtn?.addEventListener("click", async () => {
+    const lat = latitudeInput?.value;
+    const lon = longitudeInput?.value;
+    const startDate = startDateInput?.value;
+    const endDate = endDateInput?.value;
+    const discomfortThreshold = parseFloat(discomfortThresholdInput?.value || 0);
 
-		if (!lat || !lon || !startDate || !endDate) {
-			showMessage(
-				"Select location and enter both start and end date.",
-				"error"
-			);
-			return;
-		}
+    if (!lat || !lon || !startDate || !endDate) {
+        showMessage("Select location and enter both start and end date.", "error");
+        return;
+    }
 
-		showLoading();
+    showLoading();
 
-		try {
-			fetch("/api/app", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    latitude: parseFloat(lat),
-    longitude: parseFloat(lon),
-    startDate,
-    endDate,
-    discomfortThreshold,
-  }),
-			});
+    try {
+        const response = await fetch("/api/app", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                latitude: parseFloat(lat),
+                longitude: parseFloat(lon),
+                startDate,
+                endDate,
+                discomfortThreshold,
+            }),
+        });
 
-			if (!response.ok) throw new Error(`Server error: ${response.status}`);
-			const data = await response.json();
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        const data = await response.json();
 
-			if (!data || !data.realWeatherParams)
-				throw new Error("Empty backend response");
+        if (!data || !data.realWeatherParams) throw new Error("Empty backend response");
 
-			lastLikelihoods = calculateLikelihoods(data.realWeatherParams);
-			if (data.plotBase64) lastLikelihoods.plotBase64 = data.plotBase64;
+        lastLikelihoods = calculateLikelihoods(data.realWeatherParams);
+        if (data.plotBase64) lastLikelihoods.plotBase64 = data.plotBase64;
 
-			showResults(lastLikelihoods);
+        showResults(lastLikelihoods);
 
-			if (lastLikelihoods.plotBase64 && plotContainer)
-				plotContainer.innerHTML = `<img src="data:image/png;base64,${lastLikelihoods.plotBase64}" alt="NASA Plot" class="rounded-lg shadow-lg">`;
-		} catch {
-			console.warn("Using fallback data");
-			const fallbackParams = {
-				tempMax: 16.9,
-				tempMin: 6.1,
-				windMax: 10.7,
-				precipitationSum: 24.5,
-				avgHumidity: 62.1,
-			};
-			lastLikelihoods = calculateLikelihoods(fallbackParams);
-			lastLikelihoods.plotBase64 = generateFallbackChartBase64(
-				...Object.values(fallbackParams)
-			);
+        if (lastLikelihoods.plotBase64 && plotContainer)
+            plotContainer.innerHTML = `<img src="data:image/png;base64,${lastLikelihoods.plotBase64}" alt="NASA Plot" class="rounded-lg shadow-lg">`;
+    } catch (err) {
+        console.warn("Using fallback data", err);
+        const fallbackParams = {
+            tempMax: 16.9,
+            tempMin: 6.1,
+            windMax: 10.7,
+            precipitationSum: 24.5,
+            avgHumidity: 62.1,
+        };
+        lastLikelihoods = calculateLikelihoods(fallbackParams);
+        lastLikelihoods.plotBase64 = generateFallbackChartBase64(...Object.values(fallbackParams));
 
-			showResults(lastLikelihoods);
+        showResults(lastLikelihoods);
 
-			if (lastLikelihoods.plotBase64 && plotContainer)
-				plotContainer.innerHTML = `<img src="data:image/png;base64,${lastLikelihoods.plotBase64}" alt="Fallback Plot" class="rounded-lg shadow-lg">`;
-		} finally {
-			hideLoading();
-		}
-	});
+        if (lastLikelihoods.plotBase64 && plotContainer)
+            plotContainer.innerHTML = `<img src="data:image/png;base64,${lastLikelihoods.plotBase64}" alt="Fallback Plot" class="rounded-lg shadow-lg">`;
+    } finally {
+        hideLoading();
+    }
+});
+
 
 	// --- Fallback chart generator ---
 	function generateFallbackChartBase64(
