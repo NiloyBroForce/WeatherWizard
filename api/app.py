@@ -114,7 +114,7 @@ def run_data_processing(
             end_date=nasa_end_date,
             latitude=latitude,
             longitude=longitude,
-            variable="NLDAS2:NLDAS_FORA0125_H_v2.0:Rainf"
+            variable="GLDAS2:GLDAS_NOAH025_3H_v2.1:Rainf_f_tavg"
         )
     )
 
