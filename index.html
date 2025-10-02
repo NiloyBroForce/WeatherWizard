@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeatherWizard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+   
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-          xintegrity="sha512-xodxRmPTx4xN4t29I+sWlW44v5/W5/wD3qW5eA5x5qN5sL5qW8wD5q5w+wD5q5w+wD5q5wD5q5w"
-          crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-            xintegrity="sha512-N6RkYv5uKkK8F7wPqS8/gL8mF5F45bK8xL6mR5vL5nL5kS5r4kL5p5q4l5x4q5l4nL4m5p5q4l5x4q5l4n"
-            crossorigin=""></script>
+      xintegrity="sha512-xodZBNTC5n17Xt2+gG8C4f7CkZd3sQb/3HuRkzC1T9q3Hh1M/+4m+hVfYVj3OTvU9F6pyvM5oF6H+J0lq9H7AA=="
+      crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        xintegrity="sha512-gZwIG9x3wUXgLkA/3Z6X3fWvW0bZ8wMVkMwH9yG6ZZUZ7nLMSgkFyJ7Vj4HgR2YrT+ZrX6q14R9HEq7k8Yu1Iw=="
+        crossorigin=""></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
@@ -97,42 +99,53 @@
                 </div>
             </div>
             <div>
-                <label for="date" class="block text-sm font-medium text-sky-400 mb-1">
-                    Date
-                </label>
-                <input type="date" id="date"
-                       class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
-            </div>
+    <label for="start-date" class="block text-sm font-medium text-sky-400 mb-1">
+        Start Date
+    </label>
+    <input type="date" id="start-date"
+           class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
+</div>
+<div>
+    <label for="end-date" class="block text-sm font-medium text-sky-400 mb-1">
+        End Date
+    </label>
+    <input type="date" id="end-date"
+           class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
+</div>
+            <!-- Loading Indicator -->
+            
+            
             <div>
                 <label for="discomfort-select" class="block text-sm font-medium text-sky-400 mb-1">
                     What makes you uncomfortable?
                 </label>
                 <select id="discomfort-select"
-                        class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
-                    <option value="none">None (Base on Temp/Humidity)</option>
-                    <option value="hot">Very Hot</option>
-                    <option value="cold">Very Cold</option>
-                    <option value="windy">Very Windy</option>
-                    <option value="wet">Very Wet</option>
-                </select>
-            </div>
+                class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
+                <option value="none">None (Base on Temp/Humidity)</option>
+                <option value="hot">Very Hot</option>
+                <option value="cold">Very Cold</option>
+                <option value="windy">Very Windy</option>
+                <option value="wet">Very Wet</option>
+            </select>
+        </div>
             <div>
                 <label for="discomfort-threshold" class="block text-sm font-medium text-sky-400 mb-1">
                     Personalized Uncomfortable Threshold: <span id="threshold-value">25</span>°C
                 </label>
                 <input type="range" id="discomfort-threshold" min="0" max="50" value="25"
                        class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-            </div>
+                    </div>
             <div class="flex items-center justify-center">
                 <button id="predict-btn"
-                        class="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all duration-200">
-                    Get Weather Likelihood
-                </button>
-            </div>
+                class="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all duration-200">
+                Get Weather Likelihood
+            </button>
         </div>
- 
-        <!-- Loading and Results Area -->
-        <div id="loading" class="mt-8 hidden text-center text-gray-500">
+    </div>
+
+    <div id="loading" class="text-sky-400 text-sm mb-2 hidden">
+        Loading...
+  
             <svg class="animate-spin h-8 w-8 text-sky-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -169,323 +182,10 @@
             </div>
         </div>
     </div>
- 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const predictBtn = document.getElementById('predict-btn');
-            const geminiInsightsBtn = document.getElementById('gemini-insights-btn');
-            const latitudeInput = document.getElementById('latitude');
-            const longitudeInput = document.getElementById('longitude');
-            const dateInput = document.getElementById('date');
-            const discomfortSelectInput = document.getElementById('discomfort-select');
-            const discomfortThresholdInput = document.getElementById('discomfort-threshold');
-            const discomfortThresholdValue = document.getElementById('threshold-value');
-            const loading = document.getElementById('loading');
-            const results = document.getElementById('results');
-            const resultsContent = document.getElementById('results-content');
-            const geminiInsightsDiv = document.getElementById('gemini-insights');
-            const geminiText = document.getElementById('gemini-text');
-            const nasaMissionsDiv = document.getElementById('nasa-missions');
-            const messageBox = document.getElementById('message-box');
-            const messageText = document.getElementById('message-text');
- 
-            let lastLikelihoods = {};
-            let map;
-            let marker = null;
- 
-            // Update threshold value display on slider change
-            discomfortThresholdInput.addEventListener('input', () => {
-                discomfortThresholdValue.textContent = discomfortThresholdInput.value;
-            });
- 
-            // Set the min date to today and max date to 16 days from now
-            const today = new Date();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-            dateInput.min = today.toISOString().split('T')[0];
-            const maxDate = new Date();
-            maxDate.setDate(today.getDate() + 16);
-            dateInput.max = maxDate.toISOString().split('T')[0];
- 
-            // --- UI Functions ---
-            const showLoading = () => {
-                loading.classList.remove('hidden');
-                results.classList.add('hidden');
-                predictBtn.disabled = true;
-                predictBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            };
- 
-            const hideLoading = () => {
-                loading.classList.add('hidden');
-                predictBtn.disabled = false;
-                predictBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            };
- 
-            const showResults = (data) => {
-                resultsContent.innerHTML = ''; // Clear previous results
-                const conditions = [
-                    { name: 'Very Hot', key: 'veryHot', icon: '🥵', color: 'from-red-500 to-orange-500' },
-                    { name: 'Very Cold', key: 'veryCold', icon: '🥶', color: 'from-blue-500 to-cyan-500' },
-                    { name: 'Very Windy', key: 'veryWindy', icon: '💨', color: 'from-gray-500 to-slate-500' },
-                    { name: 'Very Wet', key: 'veryWet', icon: '💧', color: 'from-blue-700 to-indigo-700' },
-                    { name: 'Very Uncomfortable', key: 'veryUncomfortable', icon: '😩', color: 'from-purple-500 to-fuchsia-500' }
-                ];
- 
-                conditions.forEach(condition => {
-                    const probability = data[condition.key] || 0;
-                    const progressColor = getProgressBarColorClass(probability);
-                    const item = `
-                        <div class="bg-gradient-to-br ${condition.color} p-4 rounded-xl shadow-xl border border-gray-600 hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-2xl">${condition.icon}</span>
-                                <h3 class="text-lg font-semibold text-white">${condition.name}</h3>
-                            </div>
-                            <div class="w-full bg-black bg-opacity-30 rounded-full h-2.5">
-                                <div class="h-2.5 rounded-full ${progressColor} progress-bar-fill" style="width: ${probability}%"></div>
-                            </div>
-                            <p class="mt-2 text-sm text-gray-200 text-right">${probability}% likelihood</p>
-                        </div>
-                    `;
-                    resultsContent.innerHTML += item;
-                });
- 
-                results.classList.remove('hidden');
-                geminiInsightsBtn.classList.remove('hidden');
-            };
- 
-            // New function to show horizontal message box
-            const showMessage = (text, type = 'error') => {
-                messageText.textContent = text;
-                if (type === 'error') {
-                    messageBox.className = 'message-box block bg-red-600 text-white px-6 py-3 rounded-full shadow-lg text-white font-medium text-sm';
-                } else {
-                    messageBox.className = 'message-box block bg-green-500 text-white px-6 py-3 rounded-full shadow-lg text-white font-medium text-sm';
-                }
-                document.body.style.overflow = 'hidden';
-                setTimeout(() => {
-                    messageBox.classList.add('hidden');
-                    document.body.style.overflow = '';
-                }, 4000);
-            };
- 
-            const getProgressBarColorClass = (probability) => {
-                if (probability >= 75) return 'bg-gradient-to-r from-red-500 to-pink-500';
-                if (probability >= 50) return 'bg-gradient-to-r from-yellow-400 to-orange-400';
-                if (probability >= 25) return 'bg-gradient-to-r from-green-400 to-lime-400';
-                return 'bg-gradient-to-r from-blue-400 to-sky-400';
-            };
- 
-            // Reverse geocoding function
-            const reverseGeocode = async (lat, lon) => {
-                try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-                    const data = await response.json();
-                    if (data && data.address) {
-                        const city = data.address.city || data.address.town || data.address.village || '';
-                        const country = data.address.country || '';
-                        if (city && country) {
-                            return `${city}, ${country}`;
-                        } else if (country) {
-                            return country;
-                        } else {
-                            return `Lat: ${lat}, Lon: ${lon}`;
-                        }
-                    }
-                    return `Lat: ${lat}, Lon: ${lon}`;
-                } catch (error) {
-                    console.error('Reverse geocoding failed:', error);
-                    return `Lat: ${lat}, Lon: ${lon}`;
-                }
-            };
- 
-            // --- Geolocation and Map Functions ---
-            const initializeMapAndUI = (lat = 0, lon = 0) => {
-                if (map) {
-                    map.remove(); // Remove existing map instance
-                }
-                // Initialize Leaflet Map
-                map = L.map('map').setView([lat, lon], lat === 0 && lon === 0 ? 2 : 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
- 
-                // Add event listener for map clicks
-                map.on('click', (e) => {
-                    const { lat, lng } = e.latlng;
-                    latitudeInput.value = lat.toFixed(4);
-                    longitudeInput.value = lng.toFixed(4);
- 
-                    if (marker) {
-                        map.removeLayer(marker);
-                    }
-                    marker = L.marker([lat, lng]).addTo(map);
-                });
- 
-                if (lat !== 0 || lon !== 0) {
-                    latitudeInput.value = lat.toFixed(4);
-                    longitudeInput.value = lon.toFixed(4);
-                    if (marker) { map.removeLayer(marker); }
-                    marker = L.marker([lat, lon]).addTo(map);
-                }
-            };
- 
-            // --- Open-Meteo API Call ---
-            const fetchWeatherData = async (lat, lon, date, discomfortThreshold) => {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,relative_humidity_2m_max,relative_humidity_2m_min&timezone=auto&start_date=${date}&end_date=${date}`;
- 
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
- 
-                    if (!data.daily || !data.daily.time || data.daily.time.length === 0) {
-                        showMessage('Data Error: No weather data found for this date. Please try a different day or location.', 'error');
-                        return;
-                    }
- 
-                    const dailyData = data.daily;
-                    const dateIndex = dailyData.time.indexOf(date);
-                    if (dateIndex === -1) {
-                         showMessage('Data Error: No weather data found for this date. Please try a different day or location.', 'error');
-                         return;
-                    }
- 
-                    const tempMax = dailyData.temperature_2m_max[dateIndex];
-                    const tempMin = dailyData.temperature_2m_min[dateIndex];
-                    const windMax = dailyData.wind_speed_10m_max[dateIndex];
-                    const precipitationSum = dailyData.precipitation_sum[dateIndex];
-                    const humidityMax = dailyData.relative_humidity_2m_max[dateIndex];
-                    const humidityMin = dailyData.relative_humidity_2m_min[dateIndex];
-                    const avgHumidity = (humidityMax + humidityMin) / 2;
- 
-                    const veryHot = tempMax > 30 ? Math.round(Math.min(100, (tempMax - 30) * 5)) : 0;
-                    const veryCold = tempMin < 0 ? Math.round(Math.min(100, (0 - tempMin) * 5)) : 0;
-                    const veryWindy = windMax > 20 ? Math.round(Math.min(100, (windMax - 20) * 5)) : 0;
-                    const veryWet = precipitationSum > 10 ? Math.round(Math.min(100, precipitationSum * 5)) : 0;
- 
-                    const discomfortOption = discomfortSelectInput.value;
-                    let selectedCategoryLikelihood = 0;
-                    if (discomfortOption === "hot") {
-                        selectedCategoryLikelihood = veryHot;
-                    } else if (discomfortOption === "cold") {
-                        selectedCategoryLikelihood = veryCold;
-                    } else if (discomfortOption === "windy") {
-                        selectedCategoryLikelihood = veryWindy;
-                    } else if (discomfortOption === "wet") {
-                        selectedCategoryLikelihood = veryWet;
-                    }
- 
-                    const tempHumidityUncomfortable = (tempMax - 0.55 * (1 - avgHumidity / 100) * (tempMax - 14.5));
-                    const veryUncomfortableBase = tempHumidityUncomfortable > discomfortThreshold ? Math.round(Math.min(100, (tempHumidityUncomfortable - discomfortThreshold) * 5)) : 0;
- 
-                    const veryUncomfortable = Math.max(selectedCategoryLikelihood, veryUncomfortableBase);
- 
-                    const likelihoods = {
-                        veryHot,
-                        veryCold,
-                        veryWindy,
-                        veryWet,
-                        veryUncomfortable
-                    };
-                    lastLikelihoods = likelihoods;
-                    showResults(likelihoods);
- 
-                } catch (error) {
-                    console.error('Failed to fetch weather data:', error);
-                    showMessage('Unable to fetch weather data. Please check your connection and try again.', 'error');
-                } finally {
-                    hideLoading();
-                }
-            };
- 
-            // --- Gemini API Call for Insights ---
-            const getGeminiInsights = async (likelihoods, location, date, discomfortThreshold) => {
-                geminiInsightsBtn.disabled = true;
-                geminiInsightsBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                geminiText.textContent = "Generating insights...";
-                geminiInsightsDiv.classList.remove('hidden');
-                nasaMissionsDiv.classList.remove('hidden');
- 
-                const { veryHot, veryCold, veryWindy, veryWet, veryUncomfortable } = likelihoods;
- 
-                const systemPrompt = "You are a friendly and helpful AI assistant that provides weather insights and travel advice. Your tone should be conversational and encouraging. Keep your response concise, no more than three paragraphs.";
-                const userQuery = `Using data from satellite-based weather models like those employed by NASA, and a personalized discomfort threshold of ${discomfortThreshold}°C, please provide a simple, human-readable summary of the weather conditions for ${location} on ${date}. Based on the following likelihoods, then offer some practical advice for someone traveling or planning an outdoor activity:
-                    - Likelihood of Very Hot Weather: ${veryHot}%
-                    - Likelihood of Very Cold Weather: ${veryCold}%
-                    - Likelihood of Very Windy Weather: ${veryWindy}%
-                    - Likelihood of Very Wet Weather: ${veryWet}%
-                    - Likelihood of Very Uncomfortable Weather: ${veryUncomfortable}%`;
-                const apiKey = ""; // Leave as-is
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
- 
-                try {
-                    const payload = {
-                        contents: [{ parts: [{ text: userQuery }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] },
-                    };
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
- 
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.status} ${response.statusText}`);
-                    }
- 
-                    const result = await response.json();
-                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (text) {
-                        geminiText.textContent = text;
-                    } else {
-                        geminiText.textContent = "Sorry, I couldn't generate insights at this time. Please try again.";
-                    }
-                } catch (error) {
-                    console.error("Gemini API error:", error);
-                    geminiText.textContent = "An error occurred while fetching insights. Please try again later.";
-                } finally {
-                    geminiInsightsBtn.disabled = false;
-                    geminiInsightsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            };
- 
-            // --- Event Listeners ---
-            predictBtn.addEventListener('click', async () => {
-                const lat = latitudeInput.value;
-                const lon = longitudeInput.value;
-                const date = dateInput.value;
-                const discomfortThreshold = parseFloat(discomfortThresholdInput.value);
- 
-                if (!lat || !lon || !date) {
-                    showMessage('Please select a location on the map and a date.', 'error');
-                    return;
-                }
- 
-                showLoading();
-                fetchWeatherData(lat, lon, date, discomfortThreshold);
-            });
- 
-            geminiInsightsBtn.addEventListener('click', async () => {
-                if (Object.keys(lastLikelihoods).length > 0) {
-                    const lat = latitudeInput.value;
-                    const lon = longitudeInput.value;
-                    const date = dateInput.value;
-                    const discomfortThreshold = parseFloat(discomfortThresholdInput.value);
- 
-                    // Fetch and set location name before calling for insights
-                    const locationName = await reverseGeocode(lat, lon);
-                    getGeminiInsights(lastLikelihoods, locationName, date, discomfortThreshold);
-                } else {
-                    showMessage('Please get weather likelihoods first before requesting insights.', 'error');
-                }
-            });
- 
-            // Initialize map on page load
-            initializeMapAndUI();
-        });
-    </script>
+
+<script src="script.js" defer>
+    
+</script>
+
 </body>
 </html>
-
