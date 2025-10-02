@@ -125,7 +125,7 @@ def run_data_processing(
             end_date=nasa_end_date,
             latitude=latitude,
             longitude=longitude,
-            variable="NLDAS2:NLDAS_NOAH0125_H_v2.0:SoilM_0_100cm"
+            variable="GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst"
         )
     )
     
@@ -136,7 +136,7 @@ def run_data_processing(
             end_date=nasa_end_date,
             latitude=latitude,
             longitude=longitude,
-            variable="NLDAS2:NLDAS_FORA0125_H_v2.0:Tair"
+            variable="GLDAS2:GLDAS_NOAH025_3H_v2.1:Tair_f_inst"
         )
     )
     
@@ -147,7 +147,7 @@ def run_data_processing(
             end_date=nasa_end_date,
             latitude=latitude,
             longitude=longitude,
-            variable="NLDAS2:NLDAS_FORA0125_H_v2.0:Wind_E"
+            variable="GLDAS2:GLDAS_NOAH025_3H_v2.1:Wind_f_inst"
         )
     )
 
