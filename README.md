@@ -68,8 +68,10 @@ By integrating cutting-edge forecasting data with AI-powered insights, WeatherWi
 <h2>UI Preview </h2>
 
 <img width="1366" height="616" alt="Image" src="https://github.com/user-attachments/assets/7f349852-13e8-48c7-a780-5c7bfd1acb6a" /> <br>
+<img width="1366" height="610" alt="Image" src="https://github.com/user-attachments/assets/f7ed7b35-27af-4e95-a7d5-329cf945eb5a" />
 <br>
-
+<img width="1366" height="605" alt="Image" src="https://github.com/user-attachments/assets/2b2fb9d2-d21b-47f9-aa23-aa94bfe9ef02" />
+<br>
 <p>WeatherWizard is more than just a weather app - it’s a personalized weather intelligence platform. By combining NASA’s trusted climate data, AI-driven insights, and user-defined comfort thresholds, it empowers individuals to plan their daily lives with confidence, safety, and convenience.
 
 We believe WeatherWizard will become a go-to tool for travelers, outdoor enthusiasts, and anyone who values weather-aware decision-making.<p>
