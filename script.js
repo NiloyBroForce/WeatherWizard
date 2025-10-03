@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	predictBtn?.addEventListener("click", async () => {
 		const lat = parseFloat(latitudeInput.value);
 		const lon = parseFloat(longitudeInput.value);
-		const startDate = startDateInput.value;
+		const startDate = "2020-02-02";
 		const endDate = endDateInput.value;
 		const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
@@ -370,7 +370,7 @@ console.log("Drawing chart with:", lastData);
 
 		const lat = latitudeInput.value;
 		const lon = longitudeInput.value;
-		const startDate = startDateInput.value;
+		const startDate = "2020-02-02";
 		const endDate = endDateInput.value;
 		const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
