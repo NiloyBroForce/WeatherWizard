@@ -39,15 +39,21 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => messageBox.classList.add("hidden"), 4000);
     };
 
-    const showLoading = () => {
-        loading?.classList.remove("hidden");
-        results?.classList.add("hidden");
-        if (predictBtn) {
-            predictBtn.disabled = true;
-            predictBtn.classList.add("opacity-50", "cursor-not-allowed");
-        }
-    };
+   // In script.js
 
+const showLoading = () => {
+    loading?.classList.remove("hidden");
+    results?.classList.add("hidden");
+    
+    // 👇 ADD THESE TWO LINES TO HIDE THE GEMINI SECTION 👇
+    geminiInsightsDiv?.classList.add("hidden"); // Hide the insights output container
+    geminiInsightsBtn?.classList.add("hidden"); // Hide the 'Get Insights' button
+    
+    if (predictBtn) {
+        predictBtn.disabled = true;
+        predictBtn.classList.add("opacity-50", "cursor-not-allowed");
+    }
+};
     const hideLoading = () => {
         loading?.classList.add("hidden");
         if (predictBtn) {
