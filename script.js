@@ -236,9 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (pos) => initializeMapAndUI(pos.coords.latitude, pos.coords.longitude),
-            () => initializeMapAndUI(0, 0)
+            () => initializeMapAndUI(24, 90)
         );
     } else {
-        initializeMapAndUI(0, 0);
+        initializeMapAndUI(24, 90);
     }
 });
