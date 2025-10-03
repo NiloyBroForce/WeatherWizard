@@ -12,34 +12,33 @@ By integrating cutting-edge forecasting data with AI-powered insights, WeatherWi
 <b>UI/UX Designer & App Developer:</b> Muhammad Nahid
 
 <b>Researcher & Script Writer:</b> Nazmul Hassan Labid<p>
-<br>
 <h2>Core Features and Personalization</h2>
 <br>
 WeatherWizard offers deep customization to tailor predictions to your specific needs:
 
-<p><b>Interactive Location Selection:</b> Users can easily select any location on Earth by clicking on the map, supported by clear zoom and pan functionality.
+<p><b>▪️Interactive Location Selection:</b> Users can easily select any location on Earth by clicking on the map, supported by clear zoom and pan functionality.
 
-<b>Custom Likelihood Prediction:</b> The application instantly calculates the probability of five key conditions for the specified date: “Very Hot,” “Very Cold,” “Very Windy,” “Very Wet,” and “Very Uncomfortable.”
+<b>▪️Custom Likelihood Prediction:</b> The application instantly calculates the probability of five key conditions for the specified date: “Very Hot,” “Very Cold,” “Very Windy,” “Very Wet,” and “Very Uncomfortable.”
 
-<b>Personalized Discomfort Threshold:</b> Users can set a specific temperature threshold (in °C) to define what feels "uncomfortable" to them, directly influencing the final "Very Uncomfortable" score.
+<b>▪️Personalized Discomfort Threshold:</b> Users can set a specific temperature threshold (in °C) to define what feels "uncomfortable" to them, directly influencing the final "Very Uncomfortable" score.
 
-<b>Combined Likelihood Scoring:</b> The "Very Uncomfortable" likelihood is a joint score, calculating the maximum probability based on two factors: the user's selected discomfort category (e.g., "Very Wet") and the general temperature/humidity-based discomfort threshold.
+<b>▪️Combined Likelihood Scoring:</b> The "Very Uncomfortable" likelihood is a joint score, calculating the maximum probability based on two factors: the user's selected discomfort category (e.g., "Very Wet") and the general temperature/humidity-based discomfort threshold.
 
-<b>Gemini AI Insights: </b>After prediction, users can access the “Weather Insights ✨” feature, which uses the Gemini API to analyze the likelihood scores and generate a plain-language summary with practical travel and activity advice.
+<b>▪️Gemini AI Insights: </b>After prediction, users can access the “Weather Insights ✨” feature, which uses the Gemini API to analyze the likelihood scores and generate a plain-language summary with practical travel and activity advice.
 
-<b>NASA Mission Context: </b>Provides external links to relevant NASA Earth Science Missions (Giovanni, GES DISC, Hydrology Rods) to provide context on the scientific tools used to gather climate and observation data.<p> <br>
+<b>▪️NASA Mission Context: </b>Provides external links to relevant NASA Earth Science Missions (Giovanni, GES DISC, Hydrology Rods) to provide context on the scientific tools used to gather climate and observation data.<p>
 <h2>Technology Stack</h2>
 <p>WeatherWizard is built as a single-page, real-time application using modern web technologies:
 
-<b>Frontend:</b> HTML5, pure JavaScript (ES6+), and Tailwind CSS for a responsive, colorful, and gradient-heavy UI.
+<b>▪️Frontend:</b> HTML5, pure JavaScript (ES6+), and Tailwind CSS for a responsive, colorful, and gradient-heavy UI.
 
-<b>Mapping:</b> Leaflet.js for interactive, clickable mapping functionality.
+<b>▪️Mapping:</b> Leaflet.js for interactive, clickable mapping functionality.
 
-<b>Data Source:</b> Integration with NASA data & APIs for reliable, future weather predictions.
+<b>▪️Data Source:</b> Integration with NASA data & APIs for reliable, future weather predictions.
 
-<b>Intelligence Layer:</b> Google Gemini API for generating custom, context-aware user insights and travel advice.
+<b>▪️Intelligence Layer:</b> Google Gemini API for generating custom, context-aware user insights and travel advice.
 
-<b>UI/UX Aesthetics:</b> Vibrant blue, purple, and green gradients are used throughout the UI to create an engaging and modern user experience.<p><br>
+<b>▪️UI/UX Aesthetics:</b> Vibrant blue, purple, and green gradients are used throughout the UI to create an engaging and modern user experience.<p>
 
 <h2>Why WeatherWizard?</h2>
 
@@ -50,7 +49,7 @@ WeatherWizard offers deep customization to tailor predictions to your specific n
 ▪️Data-Driven: Built on reliable NASA Earth Science data sources.
 ▪️Interactive: A map-based, engaging interface for easy exploration.
 ▪️Practical: Focused on helping users plan activities and avoid risks.
-<p><br>
+<p>
 <h2>Future Enhancements</h2>
 
 ▪️Mobile App Development (React Native / Flutter).
@@ -62,7 +61,7 @@ WeatherWizard offers deep customization to tailor predictions to your specific n
 ▪️Augmented reality overlays for real-world weather visualization.
 
 ▪️Multilingual Support for global accessibility.
-<p><br>
+<p>
 <h2>UI Preview </h2>
 
 > (Add screenshots or GIFs of the app interface here to make the README more engaging.)
