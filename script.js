@@ -1,96 +1,142 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // --- DOM Elements ---
-    const predictBtn = document.getElementById("predict-btn");
-    const geminiInsightsBtn = document.getElementById("gemini-insights-btn");
-    const latitudeInput = document.getElementById("latitude");
-    const longitudeInput = document.getElementById("longitude");
-    const dateInput = document.getElementById("date");
-    const discomfortThresholdInput = document.getElementById("discomfort-threshold");
-    const discomfortThresholdValue = document.getElementById("threshold-value");
-    const loading = document.getElementById("loading");
-    const results = document.getElementById("results");
-    const resultsContent = document.getElementById("results-content");
-    const geminiInsightsDiv = document.getElementById("gemini-insights");
-    const geminiText = document.getElementById("gemini-text");
-    const nasaMissions = document.getElementById("nasa-missions");
+	// --- DOM Elements ---
+	const predictBtn = document.getElementById("predict-btn");
+	const geminiInsightsBtn = document.getElementById("gemini-insights-btn");
+	const latitudeInput = document.getElementById("latitude");
+	const longitudeInput = document.getElementById("longitude");
+	const startDateInput = document.getElementById("start-date");
+	const endDateInput = document.getElementById("end-date");
+	const discomfortThresholdInput = document.getElementById(
+		"discomfort-threshold"
+	);
+	const discomfortThresholdValue = document.getElementById("threshold-value");
+	const loading = document.getElementById("loading");
+	const results = document.getElementById("results");
+	const resultsContent = document.getElementById("results-content");
+	const geminiInsightsDiv = document.getElementById("gemini-insights");
+	const geminiText = document.getElementById("gemini-text");
+	const downloadBtn = document.getElementById("download-btn");
 
-    let map, marker = null;
-    let lastLikelihoods = {};
+	let map,
+		marker = null;
+	let lastLikelihoods = {};
+	let lastData = null;
+	let chartInstance = null;
 
-    // --- Utility Functions ---
-    discomfortThresholdInput?.addEventListener("input", () => {
-        if (discomfortThresholdValue)
-            discomfortThresholdValue.textContent = discomfortThresholdInput.value;
-    });
+	// --- Utility Functions ---
+	const showMessage = (text, type = "error") => {
+		const messageBox = document.getElementById("message-box");
+		const messageText = document.getElementById("message-text");
+		if (!messageBox || !messageText) return;
+		messageText.textContent = text;
+		messageBox.className =
+			type === "error"
+				? "message-box block bg-red-600 text-white px-6 py-3 rounded-full shadow-lg text-sm"
+				: "message-box block bg-green-500 text-white px-6 py-3 rounded-full shadow-lg text-sm";
+		messageBox.classList.remove("hidden");
+		setTimeout(() => messageBox.classList.add("hidden"), 4000);
+	};
 
-    const showMessage = (text, type = "error") => {
-        const messageBox = document.getElementById("message-box");
-        const messageText = document.getElementById("message-text");
-        if (!messageBox || !messageText) return;
-        messageText.textContent = text;
-        messageBox.className =
-            type === "error"
-                ? "message-box block bg-red-600 text-white px-6 py-3 rounded-full shadow-lg text-sm"
-                : "message-box block bg-green-500 text-white px-6 py-3 rounded-full shadow-lg text-sm";
-        messageBox.classList.remove("hidden");
-        setTimeout(() => messageBox.classList.add("hidden"), 4000);
-    };
+	const showLoading = () => {
+		loading?.classList.remove("hidden");
+		results?.classList.add("hidden");
+		if (predictBtn) {
+			predictBtn.disabled = true;
+			predictBtn.classList.add("opacity-50", "cursor-not-allowed");
+		}
+	};
 
-    const showLoading = () => {
-        loading?.classList.remove("hidden");
-        results?.classList.add("hidden");
-        if (predictBtn) {
-            predictBtn.disabled = true;
-            predictBtn.classList.add("opacity-50", "cursor-not-allowed");
-        }
-    };
+	const hideLoading = () => {
+		loading?.classList.add("hidden");
+		if (predictBtn) {
+			predictBtn.disabled = false;
+			predictBtn.classList.remove("opacity-50", "cursor-not-allowed");
+		}
+	};
 
-    const hideLoading = () => {
-        loading?.classList.add("hidden");
-        if (predictBtn) {
-            predictBtn.disabled = false;
-            predictBtn.classList.remove("opacity-50", "cursor-not-allowed");
-        }
-    };
+	discomfortThresholdInput?.addEventListener("input", () => {
+		if (discomfortThresholdValue)
+			discomfortThresholdValue.textContent = discomfortThresholdInput.value;
+	});
 
-    // --- Likelihood Calculator ---
-    function calculateLikelihoods(params) {
-        const MIN_PERCENT = 5;
-        const { tempMax, tempMin, windMax, precipitationSum, avgHumidity } = params;
+	// --- Likelihood Calculator ---
+	function calculateLikelihoods(params) {
+		const MIN_PERCENT = 5;
+		const { tempMax, tempMin, windMax, precipitationSum, avgHumidity } = params;
+		const veryHot = Math.max(
+			MIN_PERCENT,
+			Math.round(Math.min(100, (tempMax / 40) * 100))
+		);
+		const veryCold = Math.max(
+			MIN_PERCENT,
+			Math.round(Math.min(100, ((10 - tempMin) / 20) * 100))
+		);
+		const veryWindy = Math.max(
+			MIN_PERCENT,
+			Math.round(Math.min(100, (windMax / 30) * 100))
+		);
+		const veryWet = Math.max(
+			MIN_PERCENT,
+			Math.round(Math.min(100, (precipitationSum / 50) * 100))
+		);
+		const tempHumidityUncomfortable =
+			tempMax - 0.55 * (1 - avgHumidity / 100) * (tempMax - 14.5);
+		const veryUncomfortable = Math.max(
+			MIN_PERCENT,
+			Math.round(Math.min(100, (tempHumidityUncomfortable / 35) * 100))
+		);
+		return { veryHot, veryCold, veryWindy, veryWet, veryUncomfortable };
+	}
 
-        const veryHot = Math.max(MIN_PERCENT, Math.round(Math.min(100, (tempMax / 40) * 100)));
-        const veryCold = Math.max(MIN_PERCENT, Math.round(Math.min(100, ((10 - tempMin) / 20) * 100)));
-        const veryWindy = Math.max(MIN_PERCENT, Math.round(Math.min(100, (windMax / 30) * 100)));
-        const veryWet = Math.max(MIN_PERCENT, Math.round(Math.min(100, (precipitationSum / 50) * 100)));
-        const tempHumidityUncomfortable = tempMax - 0.55 * (1 - avgHumidity / 100) * (tempMax - 14.5);
-        const veryUncomfortable = Math.max(MIN_PERCENT, Math.round(Math.min(100, (tempHumidityUncomfortable / 35) * 100)));
+	const getProgressBarColorClass = (probability) => {
+		if (probability >= 75) return "bg-gradient-to-r from-red-500 to-pink-500";
+		if (probability >= 50)
+			return "bg-gradient-to-r from-yellow-400 to-orange-400";
+		if (probability >= 25) return "bg-gradient-to-r from-green-400 to-lime-400";
+		return "bg-gradient-to-r from-blue-400 to-sky-400";
+	};
 
-        return { veryHot, veryCold, veryWindy, veryWet, veryUncomfortable };
-    }
+	const showResults = (data) => {
+		if (!resultsContent) return;
+		resultsContent.innerHTML = "";
 
-    const getProgressBarColorClass = (probability) => {
-        if (probability >= 75) return "bg-gradient-to-r from-red-500 to-pink-500";
-        if (probability >= 50) return "bg-gradient-to-r from-yellow-400 to-orange-400";
-        if (probability >= 25) return "bg-gradient-to-r from-green-400 to-lime-400";
-        return "bg-gradient-to-r from-blue-400 to-sky-400";
-    };
+		const conditions = [
+			{
+				name: "Very Hot",
+				key: "veryHot",
+				icon: "🥵",
+				color: "from-red-500 to-orange-500",
+			},
+			{
+				name: "Very Cold",
+				key: "veryCold",
+				icon: "🥶",
+				color: "from-blue-500 to-cyan-500",
+			},
+			{
+				name: "Very Windy",
+				key: "veryWindy",
+				icon: "💨",
+				color: "from-gray-500 to-slate-500",
+			},
+			{
+				name: "Very Wet",
+				key: "veryWet",
+				icon: "💧",
+				color: "from-blue-700 to-indigo-700",
+			},
+			{
+				name: "Very Uncomfortable",
+				key: "veryUncomfortable",
+				icon: "😩",
+				color: "from-purple-500 to-fuchsia-500",
+			},
+		];
 
-    const showResults = (data) => {
-        if (!resultsContent) return;
-        resultsContent.innerHTML = "";
-
-        const conditions = [
-            { name: "Very Hot", key: "veryHot", icon: "🥵", color: "from-red-500 to-orange-500" },
-            { name: "Very Cold", key: "veryCold", icon: "🥶", color: "from-blue-500 to-cyan-500" },
-            { name: "Very Windy", key: "veryWindy", icon: "💨", color: "from-gray-500 to-slate-500" },
-            { name: "Very Wet", key: "veryWet", icon: "💧", color: "from-blue-700 to-indigo-700" },
-            { name: "Very Uncomfortable", key: "veryUncomfortable", icon: "😩", color: "from-purple-500 to-fuchsia-500" },
-        ];
-
-        conditions.forEach(c => {
-            const probability = data[c.key] || 0;
-            const progressColor = getProgressBarColorClass(probability);
-            const item = `
+		conditions.forEach((c) => {
+			const probability = data[c.key] || 0;
+			const progressColor = getProgressBarColorClass(probability);
+			const item = `
                 <div class="bg-gradient-to-br ${c.color} p-4 rounded-xl shadow-xl border border-gray-600 hover:scale-105 transition-transform duration-300">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-2xl">${c.icon}</span>
@@ -101,152 +147,258 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <p class="mt-2 text-sm text-gray-200 text-right">${probability}% likelihood</p>
                 </div>`;
-            resultsContent.innerHTML += item;
-        });
+			resultsContent.innerHTML += item;
+		});
 
-        results?.classList.remove("hidden");
-        geminiInsightsBtn?.classList.remove("hidden");
-        nasaMissions?.classList.remove("hidden");
-    };
+		results?.classList.remove("hidden");
+		geminiInsightsBtn?.classList.remove("hidden");
+	};
+	// --- Chart ---
+	const showChart = (dates, temp, wind, precip) => {
+		const ctx = document.getElementById("plotChart").getContext("2d");
+		if (chartInstance) chartInstance.destroy();
+		chartInstance = new Chart(ctx, {
+			type: "line",
+			data: {
+				labels: dates,
+				datasets: [
+					{
+						label: "Temperature (°C)",
+						data: temp,
+						borderColor: "red",
+						backgroundColor: "rgba(255,0,0,0.2)",
+						fill: false,
+						tension: 0.3,
+					},
+					{
+						label: "Wind Speed (km/h)",
+						data: wind,
+						borderColor: "blue",
+						backgroundColor: "rgba(0,0,255,0.2)",
+						fill: false,
+						tension: 0.3,
+					},
+					{
+						label: "Precipitation (mm)",
+						data: precip,
+						borderColor: "green",
+						backgroundColor: "rgba(0,255,0,0.2)",
+						fill: false,
+						tension: 0.3,
+					},
+				],
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: { position: "top", labels: { color: "#e2e8f0" } },
+				},
+				scales: {
+					x: { ticks: { color: "#e2e8f0" }, grid: { color: "#2d3748" } },
+					y: { ticks: { color: "#e2e8f0" }, grid: { color: "#2d3748" } },
+				},
+			},
+		});
+	};
 
-   // --- Map Initialization with proper sizing ---
-const initializeMapAndUI = (lat = 24, lon = 90) => {
-    // Create map
-    map = L.map("map").setView([lat, lon], 13);
+	const downloadData = (dates, temp, wind, precip) => {
+		const csv = ["Date,Temperature,WindSpeed,Precipitation"]
+			.concat(dates.map((d, i) => `${d},${temp[i]},${wind[i]},${precip[i]}`))
+			.join("\n");
+		const blob = new Blob([csv], { type: "text/csv" });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = "weather_data.csv";
+		a.click();
+		URL.revokeObjectURL(url);
+	};
 
-    // Add OpenStreetMap tiles
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(map);
+	downloadBtn?.addEventListener("click", () => {
+		if (!lastData) {
+			showMessage("No data to download.", "error");
+			return;
+		}
+		downloadData(lastData.dates, lastData.temp, lastData.wind, lastData.precip);
+	});
 
-    // Force Leaflet to resize properly
-    setTimeout(() => {
-        map.invalidateSize();
-    }, 100);
+	// --- Map ---
+	const initializeMapAndUI = (lat = 0, lon = 0) => {
+		if (!map) {
+			map = L.map("map").setView([lat, lon], lat && lon ? 13 : 2);
+			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+				attribution: "&copy; OpenStreetMap contributors",
+			}).addTo(map);
+			map.on("click", (e) => {
+				const { lat, lng } = e.latlng;
+				latitudeInput.value = lat.toFixed(4);
+				longitudeInput.value = lng.toFixed(4);
+				if (marker) map.removeLayer(marker);
+				marker = L.marker([lat, lng]).addTo(map);
+			});
+		}
+		if (lat || lon) {
+			latitudeInput.value = lat.toFixed(4);
+			longitudeInput.value = lon.toFixed(4);
+			if (marker) map.removeLayer(marker);
+			marker = L.marker([lat, lon]).addTo(map);
+		}
+	};
 
-    // Add click event for selecting location
-    map.on("click", (e) => {
-        const { lat, lng } = e.latlng;
-        latitudeInput.value = lat.toFixed(4);
-        longitudeInput.value = lng.toFixed(4);
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			(pos) => initializeMapAndUI(pos.coords.latitude, pos.coords.longitude),
+			() => initializeMapAndUI(0, 0)
+		);
+	} else {
+		initializeMapAndUI(0, 0);
+	}
 
-        // Remove previous marker
-        if (marker) map.removeLayer(marker);
+	// --- Predict Button ---
+	predictBtn?.addEventListener("click", async () => {
+		const lat = parseFloat(latitudeInput.value);
+		const lon = parseFloat(longitudeInput.value);
+		const startDate = startDateInput.value;
+		const endDate = endDateInput.value;
+		const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
-        // Add new marker
-        marker = L.marker([lat, lng]).addTo(map);
-    });
+		if (isNaN(lat) || isNaN(lon) || !startDate || !endDate) {
+			showMessage(
+				"Select location and enter both start and end date.",
+				"error"
+			);
+			return;
+		}
 
-    // Add initial marker
-    latitudeInput.value = lat.toFixed(4);
-    longitudeInput.value = lon.toFixed(4);
-    marker = L.marker([lat, lon]).addTo(map);
-};
+		showLoading();
 
+		try {
+			const response = await fetch("/api/app", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					latitude: lat,
+					longitude: lon,
+					startDate,
+					endDate,
+					discomfortThreshold,
+				}),
+			});
+			if (!response.ok) throw new Error(`Server error: ${response.status}`);
+			const data = await response.json();
+			if (!data || !data.realWeatherParams)
+				throw new Error("Empty backend response");
 
-    // Initialize map immediately
-    initializeMapAndUI();
+			// --- Calculate likelihoods and display ---
+			lastLikelihoods = calculateLikelihoods(data.realWeatherParams);
+			showResults(lastLikelihoods);
 
-    // --- Predict Button ---
-    predictBtn?.addEventListener("click", async () => {
-        const lat = parseFloat(latitudeInput.value);
-        const lon = parseFloat(longitudeInput.value);
-        const date = dateInput.value;
-        const startDate = new Date("2020-02-02").toISOString().split("T")[0];
-        const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
+			// --- Update chart and table ---
+			lastData = {
+				dates: data.dates || [startDate],
+				temp: data.temp || [data.realWeatherParams.tempMax],
+				wind: data.wind || [data.realWeatherParams.windMax],
+				precip: data.precip || [data.realWeatherParams.precipitationSum],
+			};
 
-        if (!lat || !lon || !date) {
-            showMessage("Select location and enter the date.", "error");
-            return;
-        }
+			// Use existing canvas
+			const plotCanvas = document.getElementById("plotChart");
+			const ctx = plotCanvas.getContext("2d");
 
-        showLoading();
+			// Destroy old chart instance if exists
+			if (chartInstance) chartInstance.destroy();
+console.log("Drawing chart with:", lastData);
+			// Create new chart
+			chartInstance = new Chart(ctx, {
+				type: "line",
+				data: {
+					labels: lastData.dates,
+					datasets: [
+						{
+							label: "Temperature (°C)",
+							data: lastData.temp,
+							borderColor: "red",
+							fill: false,
+						},
+						{
+							label: "Wind Speed (m/s)",
+							data: lastData.wind,
+							borderColor: "blue",
+							fill: false,
+						},
+						{
+							label: "Precipitation (mm)",
+							data: lastData.precip,
+							borderColor: "green",
+							fill: false,
+						},
+					],
+				},
+				options: { responsive: true, maintainAspectRatio: false },
+			});
+		} catch (err) {
+			console.error(err);
+			showMessage("Failed to fetch data. Using fallback values.", "error");
 
-        try {
-            const response = await fetch("/api/app", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    latitude: lat,
-                    longitude: lon,
-                    startDate,
-                    endDate: date,
-                    discomfortThreshold,
-                }),
-            });
+			const fallback = {
+				tempMax: 16.9,
+				tempMin: 6.1,
+				windMax: 10.7,
+				precipitationSum: 24.5,
+				avgHumidity: 62.1,
+			};
+			lastLikelihoods = calculateLikelihoods(fallback);
+			showResults(lastLikelihoods);
+			lastData = {
+				dates: [startDate],
+				temp: [fallback.tempMax],
+				wind: [fallback.windMax],
+				precip: [fallback.precipitationSum],
+			};
+		} finally {
+			hideLoading();
+		}
+	});
 
-            if (!response.ok) throw new Error(`Server error: ${response.status}`);
-            const data = await response.json();
+	// --- Gemini Insights ---
+	geminiInsightsBtn?.addEventListener("click", async () => {
+		if (!lastLikelihoods || Object.keys(lastLikelihoods).length === 0) {
+			showMessage("Get weather likelihoods first.", "error");
+			return;
+		}
 
-            if (!data || !data.realWeatherParams) throw new Error("Empty backend response");
+		const lat = latitudeInput.value;
+		const lon = longitudeInput.value;
+		const startDate = startDateInput.value;
+		const endDate = endDateInput.value;
+		const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
-            lastLikelihoods = calculateLikelihoods(data.realWeatherParams);
-            showResults(lastLikelihoods);
+		try {
+			const locationName = `${lat}, ${lon}`;
+			geminiText.textContent = "Generating insights...";
+			geminiInsightsDiv.classList.remove("hidden");
 
-        } catch (err) {
-            console.error("Fallback data due to error:", err);
+			const res = await fetch("/api/gemini", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					likelihoods: lastLikelihoods,
+					location: locationName,
+					startDate,
+					endDate,
+					discomfortThreshold,
+				}),
+			});
 
-            const randInRange = (min, max) => (Math.random() * (max - min) + min).toFixed(1);
-            const fallbackParams = {
-                tempMax: parseFloat(randInRange(0, 55)),
-                tempMin: parseFloat(randInRange(-10, 70)),
-                windMax: parseFloat(randInRange(4, 40)),
-                precipitationSum: parseFloat(randInRange(0, 100)),
-                avgHumidity: parseFloat(randInRange(30, 95))
-            };
-
-            lastLikelihoods = calculateLikelihoods(fallbackParams);
-            showResults(lastLikelihoods);
-        } finally {
-            hideLoading();
-        }
-    });
-
-    // --- Gemini Insights Button ---
-    geminiInsightsBtn?.addEventListener("click", async () => {
-        if (!lastLikelihoods || Object.keys(lastLikelihoods).length === 0) {
-            showMessage("Get weather likelihoods first.", "error");
-            return;
-        }
-
-        const lat = parseFloat(latitudeInput.value);
-        const lon = parseFloat(longitudeInput.value);
-        const date = dateInput.value;
-        const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
-
-        if (!lat || !lon || !date) {
-            showMessage("Select location and enter the date.", "error");
-            return;
-        }
-
-        geminiInsightsBtn.disabled = true;
-        geminiInsightsBtn.classList.add("opacity-50", "cursor-not-allowed");
-        geminiInsightsDiv.classList.remove("hidden");
-        geminiText.textContent = "Generating insights...";
-
-        try {
-            const response = await fetch("/api/gemini", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    likelihoods: lastLikelihoods,
-                    location: `Lat: ${lat}, Lon: ${lon}`,
-                    startDate: new Date("2020-01-01").toISOString().split("T")[0],
-                    endDate: date,
-                    discomfortThreshold
-                }),
-            });
-
-            if (!response.ok) throw new Error(`Server error: ${response.status}`);
-            const data = await response.json();
-
-            geminiText.textContent = data.text || "Couldn't generate insights at this time.";
-        } catch (err) {
-            console.error(err);
-            geminiText.textContent = "An error occurred while fetching insights.";
-        } finally {
-            geminiInsightsBtn.disabled = false;
-            geminiInsightsBtn.classList.remove("opacity-50", "cursor-not-allowed");
-        }
-    });
+			if (!res.ok) throw new Error(`Gemini API error: ${res.status}`);
+			const result = await res.json();
+			geminiText.textContent =
+				result.text || "Couldn't generate insights at this time.";
+			geminiInsightsDiv.scrollIntoView({ behavior: "smooth" });
+		} catch (err) {
+			console.error(err);
+			geminiText.textContent = "Error fetching Gemini insights.";
+		}
+	});
 });
