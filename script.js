@@ -387,8 +387,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const locationName = `${lat}, ${lon}`;
             // FIX: Added optional chaining for safety on geminiText and geminiInsightsDiv 
             // since they were part of the previous 'null' errors, assuming you fix the HTML
-            geminiText?.textContent = "Generating insights...";
-            geminiInsightsDiv?.classList.remove("hidden");
+           if (geminiText) {
+    geminiText.textContent = "Generating insights...";
+}
+
+// And for the next line, you can keep the optional chaining 
+// because you are *calling a method* (`.remove`), not assigning a value:
+geminiInsightsDiv?.classList.remove("hidden");
 
             const res = await fetch("/api/gemini", {
                 method: "POST",
