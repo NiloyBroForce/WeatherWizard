@@ -109,28 +109,29 @@ document.addEventListener("DOMContentLoaded", () => {
         nasaMissions?.classList.remove("hidden");
     };
 
-    // --- Map Initialization ---
+    // --- Map Initialization (no geolocation) ---
     const initializeMapAndUI = (lat = 24, lon = 90) => {
-        if (!map) {
-            map = L.map("map").setView([lat, lon], lat && lon ? 13 : 2);
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: "&copy; OpenStreetMap contributors",
-            }).addTo(map);
+        map = L.map("map").setView([lat, lon], 13);
 
-            map.on("click", (e) => {
-                const { lat, lng } = e.latlng;
-                latitudeInput.value = lat.toFixed(4);
-                longitudeInput.value = lng.toFixed(4);
-                if (marker) map.removeLayer(marker);
-                marker = L.marker([lat, lng]).addTo(map);
-            });
-        }
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+
+        map.on("click", (e) => {
+            const { lat, lng } = e.latlng;
+            latitudeInput.value = lat.toFixed(4);
+            longitudeInput.value = lng.toFixed(4);
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map);
+        });
 
         latitudeInput.value = lat.toFixed(4);
         longitudeInput.value = lon.toFixed(4);
-        if (marker) map.removeLayer(marker);
         marker = L.marker([lat, lon]).addTo(map);
     };
+
+    // Initialize map immediately
+    initializeMapAndUI();
 
     // --- Predict Button ---
     predictBtn?.addEventListener("click", async () => {
@@ -234,14 +235,4 @@ document.addEventListener("DOMContentLoaded", () => {
             geminiInsightsBtn.classList.remove("opacity-50", "cursor-not-allowed");
         }
     });
-
-    // --- Geolocation fallback ---
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => initializeMapAndUI(pos.coords.latitude, pos.coords.longitude),
-            () => initializeMapAndUI(24, 90)
-        );
-    } else {
-        initializeMapAndUI(24, 90);
-    }
 });
