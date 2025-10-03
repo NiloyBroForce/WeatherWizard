@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
             hideLoading();
         }
     });
-	// --- Gemini Insights Button ---
+// --- Gemini Insights Button ---
 geminiInsightsBtn?.addEventListener("click", async () => {
     if (!lastLikelihoods || Object.keys(lastLikelihoods).length === 0) {
         showMessage("Get weather likelihoods first.", "error");
@@ -185,7 +185,7 @@ geminiInsightsBtn?.addEventListener("click", async () => {
 
     const lat = parseFloat(latitudeInput.value);
     const lon = parseFloat(longitudeInput.value);
-    const date = dateInput.value; // single date
+    const date = dateInput.value;
     const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
     if (!lat || !lon || !date) {
@@ -193,23 +193,10 @@ geminiInsightsBtn?.addEventListener("click", async () => {
         return;
     }
 
-    // Optional: reverse geocode for location name
-    const locationName = await (async () => {
-        try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            const data = await res.json();
-            const city = data?.address?.city || data?.address?.town || data?.address?.village || "";
-            const country = data?.address?.country || "";
-            return city && country ? `${city}, ${country}` : country || `Lat: ${lat}, Lon: ${lon}`;
-        } catch {
-            return `Lat: ${lat}, Lon: ${lon}`;
-        }
-    })();
-
     geminiInsightsBtn.disabled = true;
     geminiInsightsBtn.classList.add("opacity-50", "cursor-not-allowed");
-    geminiText.textContent = "Generating insights...";
     geminiInsightsDiv.classList.remove("hidden");
+    geminiText.textContent = "Generating insights...";
 
     try {
         const response = await fetch("/api/gemini", {
@@ -217,8 +204,8 @@ geminiInsightsBtn?.addEventListener("click", async () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 likelihoods: lastLikelihoods,
-                location: locationName,
-                startDate: date, // single date used for both startDate and endDate
+                location: `Lat: ${lat}, Lon: ${lon}`,
+                startDate: date,
                 endDate: date,
                 discomfortThreshold
             })
@@ -227,7 +214,6 @@ geminiInsightsBtn?.addEventListener("click", async () => {
         if (!response.ok) throw new Error(`Server error: ${response.status}`);
         const data = await response.json();
         geminiText.textContent = data.text || "Couldn't generate insights at this time.";
-
     } catch (err) {
         console.error(err);
         geminiText.textContent = "An error occurred while fetching insights.";
@@ -236,6 +222,7 @@ geminiInsightsBtn?.addEventListener("click", async () => {
         geminiInsightsBtn.classList.remove("opacity-50", "cursor-not-allowed");
     }
 });
+
 
 
     // --- Geolocation fallback ---
