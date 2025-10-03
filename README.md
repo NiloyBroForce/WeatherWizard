@@ -13,10 +13,9 @@ By integrating cutting-edge forecasting data with AI-powered insights, WeatherWi
 
 <b>Researcher & Script Writer:</b> Nazmul Hassan Labid<p>
 <h2>Core Features and Personalization</h2>
-<br>
-WeatherWizard offers deep customization to tailor predictions to your specific needs:
+<p>WeatherWizard offers deep customization to tailor predictions to your specific needs:
 
-<p><b>▪️Interactive Location Selection:</b> Users can easily select any location on Earth by clicking on the map, supported by clear zoom and pan functionality.
+<b>▪️Interactive Location Selection:</b> Users can easily select any location on Earth by clicking on the map, supported by clear zoom and pan functionality.
 
 <b>▪️Custom Likelihood Prediction:</b> The application instantly calculates the probability of five key conditions for the specified date: “Very Hot,” “Very Cold,” “Very Windy,” “Very Wet,” and “Very Uncomfortable.”
 
