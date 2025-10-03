@@ -1,185 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeatherWizard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-   
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-      xintegrity="sha512-xodZBNTC5n17Xt2+gG8C4f7CkZd3sQb/3HuRkzC1T9q3Hh1M/+4m+hVfYVj3OTvU9F6pyvM5oF6H+J0lq9H7AA=="
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeatherWizard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2+gG8C4f7CkZd3sQb/3HuRkzC1T9q3Hh1M/+4m+hVfYVj3OTvU9F6pyvM5oF6H+J0lq9H7AA=="
       crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        xintegrity="sha512-gZwIG9x3wUXgLkA/3Z6X3fWvW0bZ8wMVkMwH9yG6ZZUZ7nLMSgkFyJ7Vj4HgR2YrT+ZrX6q14R9HEq7k8Yu1Iw=="
+        integrity="sha512-gZwIG9x3wUXgLkA/3Z6X3fWvW0bZ8wMVkMwH9yG6ZZUZ7nLMSgkFyJ7Vj4HgR2YrT+ZrX6q14R9HEq7k8Yu1Iw=="
         crossorigin=""></script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #10151b 0%, #1c2128 100%);
-            color: #e2e8f0;
-        }
-        #map {
-            height: 300px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .container {
-            background-color: #1a202c;
-            border: 1px solid #2d3748;
-        }
-        .gradient-bg {
-            background-image: linear-gradient(to right, #6EE7B7, #3B82F6);
-        }
-        .progress-bar-fill {
-            transition: width 0.5s ease-in-out;
-        }
-        .animate-pulse-btn {
-            animation: pulse-border 1.5s infinite;
-        }
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
-        .message-box {
-            position: fixed;
-            top: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            transition: opacity 0.3s ease-in-out;
-        }
-    </style>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #10151b 0%, #1c2128 100%);
+        color: #e2e8f0;
+    }
+    #map { height: 300px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .container { background-color: #1a202c; border: 1px solid #2d3748; }
+    .gradient-bg { background-image: linear-gradient(to right, #6EE7B7, #3B82F6); }
+    .progress-bar-fill { transition: width 0.5s ease-in-out; }
+    .animate-pulse-btn { animation: pulse-border 1.5s infinite; }
+    @keyframes pulse-border {
+        0% { box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(74,222,128,0); }
+        100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    }
+    .message-box { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 1000; transition: opacity 0.3s ease-in-out; }
+</style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
- 
-    <!-- New Message Box -->
-    <div id="message-box" class="message-box hidden px-6 py-3 rounded-full shadow-lg text-white font-medium text-sm">
-        <span id="message-text"></span>
-    </div>
- 
-    <!-- Main App UI -->
-    <div id="main-app-container" class="container p-8 rounded-3xl shadow-2xl w-full max-w-2xl">
-        <h1 class="text-4xl font-extrabold text-center mb-4 text-white">
-            WeatherWizard
-        </h1>
-        <p class="text-center text-gray-300 mb-8">
-            Using real satellite data from NASA APIs to predict the likelihood of adverse weather for your chosen location and date.
-        </p>
- 
-        <!-- Map and Coordinates -->
-        <div class="space-y-6 mb-6">
-            <div>
-                <div class="flex flex-col items-center justify-center mb-1">
-                    <label class="px-4 py-2 text-xs font-semibold rounded-2xl shadow-lg bg-green-500 text-white animate-pulse-btn">
-                        Click on the map to select a location
-                    </label>
-                    <div class="mt-2 text-sm text-gray-400 text-center">
-                        You can also zoom in and out using your mouse wheel or pinch gesture.
-                    </div>
-                </div>
-                <div id="map" class="cursor-pointer"></div>
-                <div class="mt-4 flex space-x-4">
-                    <div class="w-1/2">
-                        <label for="latitude" class="block text-sm font-medium text-gray-500">
-                            Latitude
-                        </label>
-                        <input type="text" id="latitude" readonly
-                               class="mt-1 block w-full px-4 py-2 bg-gray-900 text-sky-200 border border-gray-700 rounded-xl shadow-sm sm:text-sm cursor-not-allowed">
-                    </div>
-                    <div class="w-1/2">
-                        <label for="longitude" class="block text-sm font-medium text-gray-500">
-                            Longitude
-                        </label>
-                        <input type="text" id="longitude" readonly
-                               class="mt-1 block w-full px-4 py-2 bg-gray-900 text-sky-200 border border-gray-700 rounded-xl shadow-sm sm:text-sm cursor-not-allowed">
-                    </div>
+
+<!-- Message Box -->
+<div id="message-box" class="message-box hidden px-6 py-3 rounded-full shadow-lg text-white font-medium text-sm">
+    <span id="message-text"></span>
+</div>
+
+<!-- Main App UI -->
+<div id="main-app-container" class="container p-8 rounded-3xl shadow-2xl w-full max-w-2xl">
+    <h1 class="text-4xl font-extrabold text-center mb-4 text-white">WeatherWizard</h1>
+    <p class="text-center text-gray-300 mb-8">
+        Using real satellite data from NASA APIs to predict the likelihood of adverse weather for your chosen location and date.
+    </p>
+
+    <!-- Map and Coordinates -->
+    <div class="space-y-6 mb-6">
+        <div>
+            <div class="flex flex-col items-center justify-center mb-1">
+                <label class="px-4 py-2 text-xs font-semibold rounded-2xl shadow-lg bg-green-500 text-white animate-pulse-btn">
+                    Click on the map to select a location
+                </label>
+                <div class="mt-2 text-sm text-gray-400 text-center">
+                    You can also zoom in and out using your mouse wheel or pinch gesture.
                 </div>
             </div>
-            <div>
- <div>
-    <label for="date" class="block text-sm font-medium text-sky-400 mb-1">
-        Date
-    </label>
-    <input type="date" id="date"
-           class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
-</div>
-            <!-- Loading Indicator -->
-            
-            
-            <div>
-                <label for="discomfort-select" class="block text-sm font-medium text-sky-400 mb-1">
-                    What makes you uncomfortable?
-                </label>
-                <select id="discomfort-select"
-                class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
-                <option value="none">None (Base on Temp/Humidity)</option>
-                <option value="hot">Very Hot</option>
-                <option value="cold">Very Cold</option>
-                <option value="windy">Very Windy</option>
-                <option value="wet">Very Wet</option>
-            </select>
+            <div id="map" class="cursor-pointer"></div>
+            <div class="mt-4 flex space-x-4">
+                <div class="w-1/2">
+                    <label for="latitude" class="block text-sm font-medium text-gray-500">Latitude</label>
+                    <input type="text" id="latitude" readonly class="mt-1 block w-full px-4 py-2 bg-gray-900 text-sky-200 border border-gray-700 rounded-xl shadow-sm sm:text-sm cursor-not-allowed">
+                </div>
+                <div class="w-1/2">
+                    <label for="longitude" class="block text-sm font-medium text-gray-500">Longitude</label>
+                    <input type="text" id="longitude" readonly class="mt-1 block w-full px-4 py-2 bg-gray-900 text-sky-200 border border-gray-700 rounded-xl shadow-sm sm:text-sm cursor-not-allowed">
+                </div>
+            </div>
         </div>
-            <div>
-                <label for="discomfort-threshold" class="block text-sm font-medium text-sky-400 mb-1">
-                    Personalized Uncomfortable Threshold: <span id="threshold-value">25</span>°C
-                </label>
-                <input type="range" id="discomfort-threshold" min="0" max="50" value="25"
-                       class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                    </div>
-            <div class="flex items-center justify-center">
-                <button id="predict-btn"
-                class="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all duration-200">
+
+        <div>
+            <label for="date" class="block text-sm font-medium text-sky-400 mb-1">Date</label>
+            <input type="date" id="date" class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
+        </div>
+
+        <div>
+            <label for="discomfort-threshold" class="block text-sm font-medium text-sky-400 mb-1">
+                Personalized Uncomfortable Threshold: <span id="threshold-value">25</span>°C
+            </label>
+            <input type="range" id="discomfort-threshold" min="0" max="50" value="25" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+        </div>
+
+        <div class="flex items-center justify-center">
+            <button id="predict-btn" class="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all duration-200">
                 Get Weather Likelihood
             </button>
         </div>
     </div>
 
-    <div id="loading" class="text-sky-400 text-sm mb-2 hidden">
-        Loading...
-  
-            <svg class="animate-spin h-8 w-8 text-sky-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="mt-2 text-gray-400">Fetching satellite data from API...</p>
-        </div>
- 
-        <div id="results" class="mt-8 space-y-4 hidden">
-            <h2 class="text-2xl font-semibold text-center text-sky-200">Predicted Likelihood</h2>
-            <div id="results-content" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Results will be injected here -->
-            </div>
-            <div class="flex justify-center mt-6">
-                <button id="gemini-insights-btn"
-                        class="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-gradient-to-r from-purple-500 to-fuchsia-600 hover:from-purple-600 hover:to-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 hidden">
-                    Get Weather Insights ✨
-                </button>
-            </div>
-            <div id="gemini-insights" class="mt-4 hidden p-4 bg-gray-900 rounded-xl border border-gray-700">
-                <p id="gemini-text" class="text-gray-300 leading-relaxed"></p>
-            </div>
- 
-            <!-- NASA Missions Section -->
-            <div id="nasa-missions" class="mt-6 hidden">
-                <h3 class="text-lg font-semibold text-white mb-2">NASA Missions for Earth Science</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-400">
-                    <li><a href="https://disc.gsfc.nasa.gov/information/tools?title=OPeNDAP%20and%20GDS" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">GES DISC OPeNDAP server (Hyrax)</a> - provides access to many different data variables and provides an interface for data acquisition and subsetting.</li>
-                    <li><a href="https://disc.gsfc.nasa.gov/information/tools?title=Hydrology%20Time%20Series" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">Data Rods for Hydrology</a> - provides several different hydrological variables and will display time series for a specific location..</li>
-                    <li><a href="https://climate.nasa.gov/" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">NASA Climate Change</a> - NASA's portal for climate change data and research.</li>
-                    <li><a href="https://giovanni.gsfc.nasa.gov/giovanni/" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">Giovanni</a> - provides access to multiple datasets and variables, and provides output in data maps and time-series.</li>
-                    <li><a href="https://worldview.earthdata.nasa.gov/" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">Worldview</a> -  provides imagery and data links for numerous variables of interest.</li>
-                    
-                </ul>
-            </div>
-        </div>
+    <!-- Loading -->
+    <div id="loading" class="text-sky-400 text-sm mb-2 hidden text-center">
+        <svg class="animate-spin h-8 w-8 text-sky-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="mt-2 text-gray-400">Fetching satellite data from API...</p>
     </div>
 
-<script src="script.js" defer>
-    
-</script>
+    <!-- Results -->
+    <div id="results" class="mt-8 space-y-4 hidden">
+        <h2 class="text-2xl font-semibold text-center text-sky-200">Predicted Likelihood</h2>
+        <div id="results-content" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <div class="flex justify-center mt-6">
+            <button id="gemini-insights-btn" class="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-gradient-to-r from-purple-500 to-fuchsia-600 hover:from-purple-600 hover:to-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 hidden">
+                Get Weather Insights ✨
+            </button>
+        </div>
+        <div id="gemini-insights" class="mt-4 hidden p-4 bg-gray-900 rounded-xl border border-gray-700">
+            <p id="gemini-text" class="text-gray-300 leading-relaxed"></p>
+        </div>
+        <div id="nasa-missions" class="mt-6 hidden">
+            <h3 class="text-lg font-semibold text-white mb-2">NASA Missions for Earth Science</h3>
+            <ul class="list-disc list-inside space-y-2 text-gray-400">
+                <li><a href="https://disc.gsfc.nasa.gov/information/tools?title=OPeNDAP%20and%20GDS" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">GES DISC OPeNDAP server (Hyrax)</a></li>
+                <li><a href="https://disc.gsfc.nasa.gov/information/tools?title=Hydrology%20Time%20Series" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">Data Rods for Hydrology</a></li>
+                <li><a href="https://climate.nasa.gov/" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">NASA Climate Change</a></li>
+                <li><a href="https://giovanni.gsfc.nasa.gov/giovanni/" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">Giovanni</a></li>
+                <li><a href="https://worldview.earthdata.nasa.gov/" target="_blank" class="text-sky-300 hover:text-sky-400 transition-colors duration-200">Worldview</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 
+<script src="script.js" defer></script>
 </body>
 </html>
