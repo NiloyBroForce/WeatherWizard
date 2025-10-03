@@ -109,26 +109,40 @@ document.addEventListener("DOMContentLoaded", () => {
         nasaMissions?.classList.remove("hidden");
     };
 
-    // --- Map Initialization (no geolocation) ---
-    const initializeMapAndUI = (lat = 24, lon = 90) => {
-        map = L.map("map").setView([lat, lon], 13);
+   // --- Map Initialization with proper sizing ---
+const initializeMapAndUI = (lat = 24, lon = 90) => {
+    // Create map
+    map = L.map("map").setView([lat, lon], 13);
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution: "&copy; OpenStreetMap contributors",
-        }).addTo(map);
+    // Add OpenStreetMap tiles
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
 
-        map.on("click", (e) => {
-            const { lat, lng } = e.latlng;
-            latitudeInput.value = lat.toFixed(4);
-            longitudeInput.value = lng.toFixed(4);
-            if (marker) map.removeLayer(marker);
-            marker = L.marker([lat, lng]).addTo(map);
-        });
+    // Force Leaflet to resize properly
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
 
+    // Add click event for selecting location
+    map.on("click", (e) => {
+        const { lat, lng } = e.latlng;
         latitudeInput.value = lat.toFixed(4);
-        longitudeInput.value = lon.toFixed(4);
-        marker = L.marker([lat, lon]).addTo(map);
-    };
+        longitudeInput.value = lng.toFixed(4);
+
+        // Remove previous marker
+        if (marker) map.removeLayer(marker);
+
+        // Add new marker
+        marker = L.marker([lat, lng]).addTo(map);
+    });
+
+    // Add initial marker
+    latitudeInput.value = lat.toFixed(4);
+    longitudeInput.value = lon.toFixed(4);
+    marker = L.marker([lat, lon]).addTo(map);
+};
+
 
     // Initialize map immediately
     initializeMapAndUI();
