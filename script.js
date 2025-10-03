@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     likelihoods: lastLikelihoods,
                     location: `Lat: ${lat}, Lon: ${lon}`,
-                    startDate : new Date("2020-01-01").toISOString().split("T")[0];
+                    startDate : new Date("2020-01-01").toISOString().split("T")[0],
                     endDate: date, 
                     discomfortThreshold
                 }),
