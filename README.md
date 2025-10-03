@@ -1,12 +1,19 @@
 <h1>WeatherWizard</h1><br> 
-<h2>Team Rain Rain Go Away presents WeatherWizard:Personalized Adverse Weather Predictor </h2><br>
-<h2>A Next-Generation Tool for Customizing Your Comfort Threshold and Forecasting Adverse Conditions</h2>
+<h2>Team Rain Rain Go Away presents:</h2> <b>WeatherWizard:</b>Personalized Adverse <b>Weather Predictor</b><br>
+A Next-Generation Tool for Customizing Your Comfort Threshold and Forecasting Adverse Conditions<br>
 <h1>Introduction</h1><br>
-<h2>Welcome to WeatherWizard, a highly personalized web application designed to move beyond traditional weather reports. This tool empowers users to define their own comfort levels and receive precise likelihood predictions for adverse conditions at any chosen location and time. By integrating cutting-edge forecasting data with advanced AI insights, WeatherWizard helps users plan outdoor activities and travel with confidence.</h2>
-<h3>Team Rain Rain Go Away</h3>
-<h3>Team Leader: Rafin Islam Niloy</h3>
-<h3>UI/UX Designer & App Developer: Muhammad Nahid</h3>
-<h3>Researcher & Script Writer: Nazmul Hassan Labid</h3>
+
+<p>Welcome to WeatherWizard, a highly personalized web application designed to go beyond traditional weather reports. Instead of just reporting raw temperature or rainfall, WeatherWizard allows users to define their own comfort levels and get precise likelihood predictions for adverse weather conditions at any chosen location and time.
+
+By integrating cutting-edge forecasting data with AI-powered insights, WeatherWizard helps users plan outdoor activities, travel, and day-to-day routines with confidence.</p>
+
+<h2>Team Rain Rain Go Away</h2>
+<p><b>Team Leader:</b> Rafin Islam Niloy
+
+<b>UI/UX Designer & App Developer:</b> Muhammad Nahid
+
+<b>Researcher & Script Writer:</b> Nazmul Hassan Labid<p>
+<br>
 <h2>Core Features and Personalization</h2>
 <br>
 WeatherWizard offers deep customization to tailor predictions to your specific needs:
