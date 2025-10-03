@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const geminiInsightsBtn = document.getElementById("gemini-insights-btn");
     const latitudeInput = document.getElementById("latitude");
     const longitudeInput = document.getElementById("longitude");
-    const dateInput = document.getElementById("date"); // renamed from end-date
+    const dateInput = document.getElementById("date");
     const discomfortThresholdInput = document.getElementById("discomfort-threshold");
     const discomfortThresholdValue = document.getElementById("threshold-value");
     const loading = document.getElementById("loading");
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultsContent = document.getElementById("results-content");
     const geminiInsightsDiv = document.getElementById("gemini-insights");
     const geminiText = document.getElementById("gemini-text");
-    const plotContainer = document.getElementById("nasa-plot");
+    const nasaMissionsDiv = document.getElementById("nasa-missions");
 
     let map, marker = null;
     let lastLikelihoods = {};
@@ -106,6 +106,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         results?.classList.remove("hidden");
         geminiInsightsBtn?.classList.remove("hidden");
+
+        // --- Show NASA Missions after predicting ---
+        if (nasaMissionsDiv) {
+            nasaMissionsDiv.classList.remove("hidden", "opacity-0");
+            nasaMissionsDiv.classList.add("opacity-0"); // start transparent
+            void nasaMissionsDiv.offsetWidth; // force reflow
+            nasaMissionsDiv.classList.add("transition-opacity", "duration-1000", "opacity-100");
+        }
     };
 
     // --- Map Initialization ---
@@ -136,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lat = parseFloat(latitudeInput.value);
         const lon = parseFloat(longitudeInput.value);
         const date = dateInput.value;
-        const startDate = new Date().toISOString().split("T")[0]; // today's date
+        const startDate = new Date().toISOString().split("T")[0];
         const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
         if (!lat || !lon || !date) {
@@ -153,8 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     latitude: lat,
                     longitude: lon,
-                    startDate, // today
-                    endDate: date, // single date
+                    startDate,
+                    endDate: date,
                     discomfortThreshold,
                 }),
             });
@@ -176,54 +184,53 @@ document.addEventListener("DOMContentLoaded", () => {
             hideLoading();
         }
     });
-// --- Gemini Insights Button ---
-geminiInsightsBtn?.addEventListener("click", async () => {
-    if (!lastLikelihoods || Object.keys(lastLikelihoods).length === 0) {
-        showMessage("Get weather likelihoods first.", "error");
-        return;
-    }
 
-    const lat = parseFloat(latitudeInput.value);
-    const lon = parseFloat(longitudeInput.value);
-    const date = dateInput.value;
-    const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
+    // --- Gemini Insights Button ---
+    geminiInsightsBtn?.addEventListener("click", async () => {
+        if (!lastLikelihoods || Object.keys(lastLikelihoods).length === 0) {
+            showMessage("Get weather likelihoods first.", "error");
+            return;
+        }
 
-    if (!lat || !lon || !date) {
-        showMessage("Select location and enter the date.", "error");
-        return;
-    }
+        const lat = parseFloat(latitudeInput.value);
+        const lon = parseFloat(longitudeInput.value);
+        const date = dateInput.value;
+        const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
-    geminiInsightsBtn.disabled = true;
-    geminiInsightsBtn.classList.add("opacity-50", "cursor-not-allowed");
-    geminiInsightsDiv.classList.remove("hidden");
-    geminiText.textContent = "Generating insights...";
+        if (!lat || !lon || !date) {
+            showMessage("Select location and enter the date.", "error");
+            return;
+        }
 
-    try {
-        const response = await fetch("/api/gemini", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                likelihoods: lastLikelihoods,
-                location: `Lat: ${lat}, Lon: ${lon}`,
-                startDate: date,
-                endDate: date,
-                discomfortThreshold
-            })
-        });
+        geminiInsightsBtn.disabled = true;
+        geminiInsightsBtn.classList.add("opacity-50", "cursor-not-allowed");
+        geminiInsightsDiv.classList.remove("hidden");
+        geminiText.textContent = "Generating insights...";
 
-        if (!response.ok) throw new Error(`Server error: ${response.status}`);
-        const data = await response.json();
-        geminiText.textContent = data.text || "Couldn't generate insights at this time.";
-    } catch (err) {
-        console.error(err);
-        geminiText.textContent = "An error occurred while fetching insights.";
-    } finally {
-        geminiInsightsBtn.disabled = false;
-        geminiInsightsBtn.classList.remove("opacity-50", "cursor-not-allowed");
-    }
-});
+        try {
+            const response = await fetch("/api/gemini", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    likelihoods: lastLikelihoods,
+                    location: `Lat: ${lat}, Lon: ${lon}`,
+                    startDate: date,
+                    endDate: date,
+                    discomfortThreshold
+                })
+            });
 
-
+            if (!response.ok) throw new Error(`Server error: ${response.status}`);
+            const data = await response.json();
+            geminiText.textContent = data.text || "Couldn't generate insights at this time.";
+        } catch (err) {
+            console.error(err);
+            geminiText.textContent = "An error occurred while fetching insights.";
+        } finally {
+            geminiInsightsBtn.disabled = false;
+            geminiInsightsBtn.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+    });
 
     // --- Geolocation fallback ---
     if (navigator.geolocation) {
