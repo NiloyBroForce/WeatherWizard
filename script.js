@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         results?.classList.remove("hidden");
         geminiInsightsBtn?.classList.remove("hidden");
-        nasaMissions?.classList.remove("hidden"); // Always show NASA missions
+        nasaMissions?.classList.remove("hidden"); 
     };
 
     // --- Map Initialization ---
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lat = parseFloat(latitudeInput.value);
         const lon = parseFloat(longitudeInput.value);
         const date = dateInput.value;
-        const startDate = new Date().toISOString().split("T")[0]; // Today's date
+       const startDate = new Date("2020-02-02").toISOString().split("T")[0];
         const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
         if (!lat || !lon || !date) {
@@ -171,15 +171,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) {
     console.error("Fallback data due to error:", err);
 
-    // helper function to get a random float within a range
     const randInRange = (min, max) => (Math.random() * (max - min) + min).toFixed(1);
 
     const fallbackParams = {
-        tempMax: parseFloat(randInRange(0, 55)),      // example: 10–35 °C
-        tempMin: parseFloat(randInRange(-10, 70)),       // example: 0–20 °C
-        windMax: parseFloat(randInRange(4, 40)),       // example: 2–20 km/h
-        precipitationSum: parseFloat(randInRange(0, 100)), // example: 0–50 mm
-        avgHumidity: parseFloat(randInRange(30, 95))   // example: 30–90 %
+        tempMax: parseFloat(randInRange(0, 55)),      
+        tempMin: parseFloat(randInRange(-10, 70)),       
+        windMax: parseFloat(randInRange(4, 40)),    
+        precipitationSum: parseFloat(randInRange(0, 100)), 
+        avgHumidity: parseFloat(randInRange(30, 95))   
     };
 
     lastLikelihoods = calculateLikelihoods(fallbackParams);
@@ -220,8 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     likelihoods: lastLikelihoods,
                     location: `Lat: ${lat}, Lon: ${lon}`,
-                    startDate: new Date().toISOString().split("T")[0], // TODAY
-                    endDate: date, // Selected date
+                    startDate = new Date("2020-01-01").toISOString().split("T")[0];
+                    endDate: date, 
                     discomfortThreshold
                 }),
             });
