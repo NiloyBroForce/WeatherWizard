@@ -106,11 +106,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         results?.classList.remove("hidden");
         geminiInsightsBtn?.classList.remove("hidden");
-        nasaMissions?.classList.remove("hidden"); 
+        nasaMissions?.classList.remove("hidden");
     };
 
     // --- Map Initialization ---
-    const initializeMapAndUI = (lat = 0, lon = 0) => {
+    const initializeMapAndUI = (lat = 24, lon = 90) => {
         if (!map) {
             map = L.map("map").setView([lat, lon], lat && lon ? 13 : 2);
             L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lat = parseFloat(latitudeInput.value);
         const lon = parseFloat(longitudeInput.value);
         const date = dateInput.value;
-       const startDate = new Date("2020-02-02").toISOString().split("T")[0];
+        const startDate = new Date("2020-02-02").toISOString().split("T")[0];
         const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
         if (!lat || !lon || !date) {
@@ -169,24 +169,22 @@ document.addEventListener("DOMContentLoaded", () => {
             showResults(lastLikelihoods);
 
         } catch (err) {
-    console.error("Fallback data due to error:", err);
+            console.error("Fallback data due to error:", err);
 
-    const randInRange = (min, max) => (Math.random() * (max - min) + min).toFixed(1);
+            const randInRange = (min, max) => (Math.random() * (max - min) + min).toFixed(1);
+            const fallbackParams = {
+                tempMax: parseFloat(randInRange(0, 55)),
+                tempMin: parseFloat(randInRange(-10, 70)),
+                windMax: parseFloat(randInRange(4, 40)),
+                precipitationSum: parseFloat(randInRange(0, 100)),
+                avgHumidity: parseFloat(randInRange(30, 95))
+            };
 
-    const fallbackParams = {
-        tempMax: parseFloat(randInRange(0, 55)),      
-        tempMin: parseFloat(randInRange(-10, 70)),       
-        windMax: parseFloat(randInRange(4, 40)),    
-        precipitationSum: parseFloat(randInRange(0, 100)), 
-        avgHumidity: parseFloat(randInRange(30, 95))   
-    };
-
-    lastLikelihoods = calculateLikelihoods(fallbackParams);
-    showResults(lastLikelihoods);
-} finally {
-    hideLoading();
-}
-
+            lastLikelihoods = calculateLikelihoods(fallbackParams);
+            showResults(lastLikelihoods);
+        } finally {
+            hideLoading();
+        }
     });
 
     // --- Gemini Insights Button ---
@@ -208,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         geminiInsightsBtn.disabled = true;
         geminiInsightsBtn.classList.add("opacity-50", "cursor-not-allowed");
-
         geminiInsightsDiv.classList.remove("hidden");
         geminiText.textContent = "Generating insights...";
 
@@ -219,8 +216,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     likelihoods: lastLikelihoods,
                     location: `Lat: ${lat}, Lon: ${lon}`,
-                    startDate : new Date("2020-01-01").toISOString().split("T")[0],
-                    endDate: date, 
+                    startDate: new Date("2020-01-01").toISOString().split("T")[0],
+                    endDate: date,
                     discomfortThreshold
                 }),
             });
@@ -242,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (pos) => initializeMapAndUI(pos.coords.latitude, pos.coords.longitude),
-            () => initializeMapAndUI(0, 0)
+            () => initializeMapAndUI(24, 90)
         );
     } else {
         initializeMapAndUI(24, 90);
