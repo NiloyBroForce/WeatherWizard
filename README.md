@@ -44,9 +44,13 @@ By integrating cutting-edge forecasting data with AI-powered insights, WeatherWi
 <p>Unlike traditional weather apps, WeatherWizard is:
 
 ▪️Personalized: Comfort thresholds are user-defined, not generic.
+
 ▪️Predictive & AI-Enhanced: Provides likelihood scores + AI-generated summaries.
+
 ▪️Data-Driven: Built on reliable NASA Earth Science data sources.
+
 ▪️Interactive: A map-based, engaging interface for easy exploration.
+
 ▪️Practical: Focused on helping users plan activities and avoid risks.
 <p>
 <h2>Future Enhancements</h2>
