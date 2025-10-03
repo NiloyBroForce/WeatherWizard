@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultsContent = document.getElementById("results-content");
     const geminiInsightsDiv = document.getElementById("gemini-insights");
     const geminiText = document.getElementById("gemini-text");
-    const nasaMissionsDiv = document.getElementById("nasa-missions");
+    const nasaMissions = document.getElementById("nasa-missions");
 
     let map, marker = null;
     let lastLikelihoods = {};
@@ -106,14 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         results?.classList.remove("hidden");
         geminiInsightsBtn?.classList.remove("hidden");
-
-        // --- Show NASA Missions after predicting ---
-        if (nasaMissionsDiv) {
-            nasaMissionsDiv.classList.remove("hidden", "opacity-0");
-            nasaMissionsDiv.classList.add("opacity-0"); // start transparent
-            void nasaMissionsDiv.offsetWidth; // force reflow
-            nasaMissionsDiv.classList.add("transition-opacity", "duration-1000", "opacity-100");
-        }
+        nasaMissions?.classList.remove("hidden"); // Always show NASA missions
     };
 
     // --- Map Initialization ---
@@ -144,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lat = parseFloat(latitudeInput.value);
         const lon = parseFloat(longitudeInput.value);
         const date = dateInput.value;
-        const startDate = new Date().toISOString().split("T")[0];
+        const startDate = new Date().toISOString().split("T")[0]; // Today's date
         const discomfortThreshold = parseFloat(discomfortThresholdInput.value || 0);
 
         if (!lat || !lon || !date) {
@@ -204,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         geminiInsightsBtn.disabled = true;
         geminiInsightsBtn.classList.add("opacity-50", "cursor-not-allowed");
+
         geminiInsightsDiv.classList.remove("hidden");
         geminiText.textContent = "Generating insights...";
 
@@ -214,14 +208,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     likelihoods: lastLikelihoods,
                     location: `Lat: ${lat}, Lon: ${lon}`,
-                    startDate: date,
-                    endDate: date,
+                    startDate: new Date().toISOString().split("T")[0], // TODAY
+                    endDate: date, // Selected date
                     discomfortThreshold
-                })
+                }),
             });
 
             if (!response.ok) throw new Error(`Server error: ${response.status}`);
             const data = await response.json();
+
             geminiText.textContent = data.text || "Couldn't generate insights at this time.";
         } catch (err) {
             console.error(err);
@@ -236,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (pos) => initializeMapAndUI(pos.coords.latitude, pos.coords.longitude),
-            () => initializeMapAndUI(24, 90)
+            () => initializeMapAndUI(0, 0)
         );
     } else {
         initializeMapAndUI(24, 90);
