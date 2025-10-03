@@ -169,13 +169,25 @@ document.addEventListener("DOMContentLoaded", () => {
             showResults(lastLikelihoods);
 
         } catch (err) {
-            console.error("Fallback data due to error:", err);
-            const fallbackParams = { tempMax: 16.9, tempMin: 6.1, windMax: 10.7, precipitationSum: 24.5, avgHumidity: 62.1 };
-            lastLikelihoods = calculateLikelihoods(fallbackParams);
-            showResults(lastLikelihoods);
-        } finally {
-            hideLoading();
-        }
+    console.error("Fallback data due to error:", err);
+
+    // helper function to get a random float within a range
+    const randInRange = (min, max) => (Math.random() * (max - min) + min).toFixed(1);
+
+    const fallbackParams = {
+        tempMax: parseFloat(randInRange(0, 55)),      // example: 10–35 °C
+        tempMin: parseFloat(randInRange(-10, 70)),       // example: 0–20 °C
+        windMax: parseFloat(randInRange(4, 40)),       // example: 2–20 km/h
+        precipitationSum: parseFloat(randInRange(0, 100)), // example: 0–50 mm
+        avgHumidity: parseFloat(randInRange(30, 95))   // example: 30–90 %
+    };
+
+    lastLikelihoods = calculateLikelihoods(fallbackParams);
+    showResults(lastLikelihoods);
+} finally {
+    hideLoading();
+}
+
     });
 
     // --- Gemini Insights Button ---
