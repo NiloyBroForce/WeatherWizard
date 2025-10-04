@@ -76,7 +76,19 @@
             <label for="end-date" class="block text-sm font-medium text-sky-400 mb-1">Date</label>
             <input type="date" id="end-date" class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
         </div>
-
+<div>
+                <label for="discomfort-select" class="block text-sm font-medium text-sky-400 mb-1">
+                    What makes you uncomfortable?
+                </label>
+                <select id="discomfort-select"
+                        class="mt-1 block w-full px-4 py-2 bg-gray-900 text-gray-200 border border-gray-700 rounded-xl shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200">
+                    <option value="none">None (Base on Temp/Humidity)</option>
+                    <option value="hot">Very Hot</option>
+                    <option value="cold">Very Cold</option>
+                    <option value="windy">Very Windy</option>
+                    <option value="wet">Very Wet</option>
+                </select>
+            </div>
         <div>
             <label for="discomfort-threshold" class="block text-sm font-medium text-sky-400 mb-1">
                 Personalized Uncomfortable Threshold: <span id="threshold-value">25</span>°C
